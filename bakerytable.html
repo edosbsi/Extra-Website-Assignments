@@ -1,0 +1,154 @@
+<html>
+	<head>
+		<meta charset = "utf-8">
+		<title>Oppgave med array til select</title>
+		
+	</head>
+	<body>
+		
+		
+		
+		<h1>Nettbutikk for en kafe</h1>
+		<label>Velg kake: <select id = "selKake"></select></label>
+		<label>Velg drikke: <select id = "selDrikke"></select></label>
+		<br><br>
+		<label>Rabattkode: <input type ="text" id = "inpRabattkode"></label>
+		<label>Navn på bestiller: <input type ="text" id = "inpNavn"></label>	
+
+		<br><br>
+		<button id ="btnBestill">Legg inn bestilling</button>
+
+		<p>Vil du at vi skal velge 2 av våre fineste matvarer til deg? Bare trykk på knappen også kommer vi med forslag!</p>
+		<button id ="btnSurprise">Generer surprise bestilling</button>
+
+
+		<p id = "parBestilling">Bestilling skal vises her</p>
+		
+		<script>
+		const inpRabattkodeEl = document.querySelector("#inpRabattkode");
+		const inpNavnEl = document.querySelector("#inpNavn");
+		const selKakeEl = document.querySelector("#selKake");
+		const selDrikkeEl = document.querySelector("#selDrikke");
+		const btnBestillEl = document.querySelector("#btnBestill");
+		const btnSurpriseEl  = document.querySelector("#btnSurprise");
+		const parBestillingEl = document.querySelector("#parBestilling");
+
+		const kaker = [{type:"kanelbolle",pris:15},
+					{type:"sjokoladekake",pris:20},
+					{type:"rosinbolle",pris:25},					
+					]; 
+		
+		const drikke = [{type:"kaffe",pris:10},
+					{type:"kakao",pris:15},
+					{type:"te",pris:10},					
+					];
+		
+		const rabattkoder = [
+			{kode:"sommer20",rabatt:20},
+			{kode:"var30",rabatt:30},
+			{kode:"vinter10",rabatt:10},
+			{kode:"host40",rabatt:40},
+			{kode:"vip24", rabatt:30}
+		]
+
+		let bestillinger = [];
+
+		btnBestillEl.addEventListener("click",registrerBestilling);
+		btnSurpriseEl.addEventListener("click",valgTilfeldig);
+
+		//		Legg kaker og drikke inn i nedtrekksmenyene.
+
+		for (let i = 0;i<kaker.length;i++){
+				
+				const newOption = document.createElement("option");
+				newOption.innerHTML = kaker[i].type;			
+				newOption.value = kaker[i].type;
+				selKakeEl.appendChild(newOption); 
+		}
+
+		for (let i = 0;i<drikke.length;i++){
+				
+				const newOption = document.createElement("option");
+				newOption.innerHTML = drikke[i].type;			
+				newOption.value = drikke[i].type;
+				selDrikkeEl.appendChild(newOption); 
+		}
+
+		function registrerBestilling(){
+			let userProfil = {
+				navn: inpNavnEl.value,
+				kake: kaker[selKakeEl.selectedIndex].type,
+				drikke : drikke[selDrikkeEl.selectedIndex].type,
+				vip : false
+			}
+
+			let rabatt=0;
+			let pris=(kaker[selKakeEl.selectedIndex].pris+drikke[selDrikkeEl.selectedIndex].pris);
+
+			parBestillingEl.innerHTML+="<br> Du har bestilt en " + kaker[selKakeEl.selectedIndex].type + " og en " + drikke[selDrikkeEl.selectedIndex].type + "."
+
+			for(let i=0;i<rabattkoder.length;i++){
+				if(inpRabattkodeEl.value===rabattkoder[i].kode){
+					rabatt=rabattkoder[i].rabatt;
+				}
+
+				if(inpRabattkodeEl.value==="vip24"){
+					userProfil.vip = true;
+				}
+			}
+
+			if(rabatt===0){
+				parBestillingEl.innerHTML+="<br> Disse koster " + pris + " kr til sammen."; 
+			} else {
+				pris = (pris*((100-rabatt)/100))
+				parBestillingEl.innerHTML+="<br> Disse koster " + pris.toFixed(2) + " kr til sammen med rabatt."; 
+
+			}
+
+			if(localStorage.practice200324){
+				bestillinger.push(...JSON.parse(localStorage.practice200324));
+			}
+
+			bestillinger.push(userProfil);
+			
+			localStorage.practice200324 = JSON.stringify(bestillinger);
+
+			console.log(bestillinger);
+
+			bestillinger = [];
+		}
+
+		//localStorage.removeItem("practice200324");
+
+		function valgTilfeldig(){
+			let tilfeldigKake = Math.floor(Math.random()*kaker.length);
+			let tilfeldigDrikke = Math.floor(Math.random()*drikke.length);
+
+			selKakeEl.selectedIndex = tilfeldigKake;
+			selDrikkeEl.selectedIndex = tilfeldigDrikke;
+		}
+		
+		
+		/* 
+		OPPGAVE:		
+
+		Lag en funksjon som registrerer bestilling når man trykker på knappen.
+		Bestillingen med pris skal komme i tekstfeltet.
+		Dersom riktig rabattkode skrives i tekstfeltet skal det regnes ut 20% rabatt i bestillingen. Rabattkoden er lagret i variabelen kampanjekode
+		
+		Hvordan finne pris?
+		
+		SelKakeEl.SelectedIndex gir indeksen til valgt element i nedtrekksmenyen som kan brukes til å slå opp prisen fra arrayet.
+		
+		
+		Utvidelse av rabattkodeordningen:
+		Lagre forskjellige rabattkoder med forskjellig prosent som objekter i array, slik at flere rabatter er mulig:
+		const kampanjekoder = [{kode:"sommer20",rabatt:20},......]
+		
+		*/
+		
+		</script>
+	</body>
+
+</html>	
+		

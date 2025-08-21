@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="no">
+	<head>
+		<meta charset="utf-8">
+		<title>
+			Flere typer input-felter
+		</title>
+		<style>
+			fieldset {
+			background-color: #eeeeff;
+			}
+
+			legend {
+				background-color: gray;
+				color: white;
+				padding: 5px 10px;
+			}
+
+			input {
+				margin: 10px;
+  			}
+
+			  table, th, td {
+ 				border:1px solid black;
+    			padding:2px;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+		<div class="main">		
+				
+				<form action="" id="formBestill" >
+					<fieldset class="hovedinnhold">
+					<legend>Registrer deg her:</legend>
+					
+					<label>Navn:
+						<input type="text" id="inpNavn" required>
+					</label><br>	
+					
+						Velg favorittfargen din:
+					<div id="radioContainer"></div>
+					<br>
+
+					<label>Velg spillet ditt <select id = "selSpill"></select></label>
+
+
+					<button type = "submit" > Registrer Person </button>
+					</fieldset>
+				</form>
+
+				<div id="tableContainer"></div>
+
+			</div>
+		</div>
+
+
+		<script>
+			"use strict";
+			const selSpillEl = document.querySelector("#selSpill");
+			const formBestillEl = document.querySelector("#formBestill");
+			
+			const inpNavnEl = document.querySelector("#inpNavn");
+
+			const radioContainerEl = document.querySelector("#radioContainer");
+			const checkboxContainerEl = document.querySelector("#checkboxContainer");
+
+
+
+			const tableContainerEl = document.querySelector("#tableContainer");
+			
+
+			formBestillEl.addEventListener("submit", registrerBestilling);
+
+			const colours = ["Blue", "Red"]
+			const games = ["Chess", "Bondesjakk", "Both"]
+
+
+			for(let i=0;i<colours.length;i++){
+				let mainLabel = document.createElement("label");
+				mainLabel.innerHTML = colours[i];
+
+				let inputFelt = document.createElement("input");
+				inputFelt.type = "radio";
+				inputFelt.name = "rgColour";
+				inputFelt.value = colours[i];
+
+				if(i==0){
+					inputFelt.checked = true;
+				}
+
+				mainLabel.appendChild(inputFelt);
+				radioContainerEl.appendChild(mainLabel);
+			}
+
+			for(let i=0;i<games.length;i++){
+				const newOption = document.createElement("option");
+				newOption.innerHTML = games[i];
+
+				selSpill.appendChild(newOption);
+			}
+
+			lagTabell();
+
+
+			function lagTabell() {
+
+				let tableHoved = document.createElement("table");
+
+				let theadEl = document.createElement("thead");
+
+				let thBuffer = document.createElement("th");
+				theadEl.appendChild(thBuffer);
+
+
+				for(let i=0;i<games.length;i++){
+					let thSpill = document.createElement("th");
+					thSpill.innerText = games[i];
+					theadEl.appendChild(thSpill);
+				}
+
+				for(let i=0;i<colours.length;i++){
+					let trColour = document.createElement("tr");
+
+					let trColourHeader = document.createElement("td");
+					trColourHeader.innerHTML = colours[i];
+					
+					trColour.appendChild(trColourHeader);
+
+					for(let j=0;j<games.length;j++){
+						let trColourData = document.createElement("td");
+						let cellId = colours[i] + games[j];
+						trColourData.id = cellId;
+						trColourData.dataset.antallFolk = "0";
+
+						trColour.appendChild(trColourData);
+					}
+
+					tableHoved.appendChild(trColour);
+				}
+
+				tableHoved.appendChild(theadEl);
+                tableHoved.style.width="100%"
+				
+				tableContainerEl.appendChild(tableHoved);
+			}
+			
+
+			
+			function registrerBestilling(event) {
+   				event.preventDefault();
+
+				const rgColourValgt = document.querySelector("input[name='rgColour']:checked");
+				let favorittFarge = rgColourValgt.value;
+				let valgtSpill = games[selSpillEl.selectedIndex];
+
+				let userName = inpNavn.value;
+				let userCellId = favorittFarge + valgtSpill;
+
+				let printPlace = document.querySelector("#" + userCellId);
+
+				let persontall = parseInt(printPlace.dataset.antallFolk);
+				console.log(persontall);
+
+				if(persontall<5){
+						printPlace.innerHTML += userName + "<br>";
+					persontall++;
+					printPlace.dataset.antallFolk = persontall;
+				} else {
+					alert("Too many people!!");
+				}
+				
+			}
+
+		
+		</script>
+	</body>
+
+</html>
